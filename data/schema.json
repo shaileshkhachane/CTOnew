@@ -1,0 +1,367 @@
+{
+  "id": "sales-cube",
+  "name": "Sales Analytics Cube",
+  "description": "Star schema for sales data analysis",
+  "schemaType": "STAR",
+  "factTable": {
+    "id": "fact-sales",
+    "name": "Sales Facts",
+    "tableName": "fact_sales",
+    "description": "Transactional sales data",
+    "grain": "Individual sale transaction",
+    "measures": [
+      {
+        "id": "measure-quantity",
+        "name": "Quantity",
+        "description": "Number of items sold",
+        "aggregationType": "SUM",
+        "expression": "quantity",
+        "format": "#,##0"
+      },
+      {
+        "id": "measure-revenue",
+        "name": "Revenue",
+        "description": "Total revenue from sales",
+        "aggregationType": "SUM",
+        "expression": "revenue",
+        "format": "$#,##0.00"
+      },
+      {
+        "id": "measure-cost",
+        "name": "Cost",
+        "description": "Total cost of goods sold",
+        "aggregationType": "SUM",
+        "expression": "cost",
+        "format": "$#,##0.00"
+      },
+      {
+        "id": "measure-profit",
+        "name": "Profit",
+        "description": "Calculated profit (revenue - cost)",
+        "aggregationType": "SUM",
+        "expression": "revenue - cost",
+        "format": "$#,##0.00",
+        "isCalculated": true
+      },
+      {
+        "id": "measure-transaction-count",
+        "name": "Transaction Count",
+        "description": "Number of transactions",
+        "aggregationType": "COUNT",
+        "expression": "*"
+      },
+      {
+        "id": "measure-avg-order-value",
+        "name": "Average Order Value",
+        "description": "Average revenue per transaction",
+        "aggregationType": "AVG",
+        "expression": "revenue",
+        "format": "$#,##0.00"
+      }
+    ],
+    "dimensionReferences": [
+      {
+        "dimensionId": "dim-date",
+        "foreignKey": "date_id"
+      },
+      {
+        "dimensionId": "dim-customer",
+        "foreignKey": "customer_id"
+      },
+      {
+        "dimensionId": "dim-product",
+        "foreignKey": "product_id"
+      },
+      {
+        "dimensionId": "dim-category",
+        "foreignKey": "category_id"
+      }
+    ]
+  },
+  "dimensions": [
+    {
+      "id": "dim-date",
+      "name": "Date",
+      "tableName": "dim_date",
+      "description": "Time dimension with calendar hierarchies",
+      "primaryKey": "date_id",
+      "attributes": [
+        {
+          "id": "attr-date-id",
+          "name": "Date ID",
+          "column": "date_id",
+          "dataType": "string",
+          "isKey": true
+        },
+        {
+          "id": "attr-full-date",
+          "name": "Full Date",
+          "column": "full_date",
+          "dataType": "date"
+        },
+        {
+          "id": "attr-day",
+          "name": "Day",
+          "column": "day",
+          "dataType": "number"
+        },
+        {
+          "id": "attr-month",
+          "name": "Month",
+          "column": "month",
+          "dataType": "number"
+        },
+        {
+          "id": "attr-month-name",
+          "name": "Month Name",
+          "column": "month_name",
+          "dataType": "string"
+        },
+        {
+          "id": "attr-quarter",
+          "name": "Quarter",
+          "column": "quarter",
+          "dataType": "number"
+        },
+        {
+          "id": "attr-year",
+          "name": "Year",
+          "column": "year",
+          "dataType": "number"
+        },
+        {
+          "id": "attr-day-of-week",
+          "name": "Day of Week",
+          "column": "day_of_week",
+          "dataType": "string"
+        }
+      ]
+    },
+    {
+      "id": "dim-customer",
+      "name": "Customer",
+      "tableName": "dim_customer",
+      "description": "Customer dimension with SCD Type 2 for address tracking",
+      "primaryKey": "customer_id",
+      "attributes": [
+        {
+          "id": "attr-customer-id",
+          "name": "Customer ID",
+          "column": "customer_id",
+          "dataType": "string",
+          "isKey": true
+        },
+        {
+          "id": "attr-customer-name",
+          "name": "Customer Name",
+          "column": "customer_name",
+          "dataType": "string"
+        },
+        {
+          "id": "attr-email",
+          "name": "Email",
+          "column": "email",
+          "dataType": "string"
+        },
+        {
+          "id": "attr-city",
+          "name": "City",
+          "column": "city",
+          "dataType": "string"
+        },
+        {
+          "id": "attr-state",
+          "name": "State",
+          "column": "state",
+          "dataType": "string"
+        },
+        {
+          "id": "attr-country",
+          "name": "Country",
+          "column": "country",
+          "dataType": "string"
+        },
+        {
+          "id": "attr-segment",
+          "name": "Customer Segment",
+          "column": "segment",
+          "dataType": "string"
+        }
+      ],
+      "scdConfig": {
+        "type": "TYPE_2",
+        "versionColumn": "version",
+        "startDateColumn": "effective_date",
+        "endDateColumn": "expiration_date",
+        "currentFlagColumn": "is_current",
+        "trackedAttributes": ["city", "state", "country", "segment"]
+      }
+    },
+    {
+      "id": "dim-product",
+      "name": "Product",
+      "tableName": "dim_product",
+      "description": "Product dimension with SCD Type 1 for price updates",
+      "primaryKey": "product_id",
+      "attributes": [
+        {
+          "id": "attr-product-id",
+          "name": "Product ID",
+          "column": "product_id",
+          "dataType": "string",
+          "isKey": true
+        },
+        {
+          "id": "attr-product-name",
+          "name": "Product Name",
+          "column": "product_name",
+          "dataType": "string"
+        },
+        {
+          "id": "attr-product-sku",
+          "name": "SKU",
+          "column": "sku",
+          "dataType": "string"
+        },
+        {
+          "id": "attr-product-price",
+          "name": "Price",
+          "column": "price",
+          "dataType": "number"
+        },
+        {
+          "id": "attr-category-id",
+          "name": "Category ID",
+          "column": "category_id",
+          "dataType": "string"
+        }
+      ],
+      "scdConfig": {
+        "type": "TYPE_1",
+        "overwriteAttributes": ["price"]
+      }
+    },
+    {
+      "id": "dim-category",
+      "name": "Category",
+      "tableName": "dim_category",
+      "description": "Product category dimension",
+      "primaryKey": "category_id",
+      "attributes": [
+        {
+          "id": "attr-category-id",
+          "name": "Category ID",
+          "column": "category_id",
+          "dataType": "string",
+          "isKey": true
+        },
+        {
+          "id": "attr-category-name",
+          "name": "Category Name",
+          "column": "category_name",
+          "dataType": "string"
+        },
+        {
+          "id": "attr-department",
+          "name": "Department",
+          "column": "department",
+          "dataType": "string"
+        }
+      ]
+    }
+  ],
+  "hierarchies": [
+    {
+      "id": "hier-calendar",
+      "name": "Calendar Hierarchy",
+      "dimensionId": "dim-date",
+      "description": "Standard calendar drill-down hierarchy",
+      "levels": [
+        {
+          "id": "level-year",
+          "name": "Year",
+          "column": "year",
+          "order": 1
+        },
+        {
+          "id": "level-quarter",
+          "name": "Quarter",
+          "column": "quarter",
+          "order": 2
+        },
+        {
+          "id": "level-month",
+          "name": "Month",
+          "column": "month_name",
+          "order": 3
+        },
+        {
+          "id": "level-day",
+          "name": "Day",
+          "column": "full_date",
+          "order": 4
+        }
+      ]
+    },
+    {
+      "id": "hier-geography",
+      "name": "Geography Hierarchy",
+      "dimensionId": "dim-customer",
+      "description": "Geographic drill-down hierarchy",
+      "levels": [
+        {
+          "id": "level-country",
+          "name": "Country",
+          "column": "country",
+          "order": 1
+        },
+        {
+          "id": "level-state",
+          "name": "State",
+          "column": "state",
+          "order": 2
+        },
+        {
+          "id": "level-city",
+          "name": "City",
+          "column": "city",
+          "order": 3
+        },
+        {
+          "id": "level-customer",
+          "name": "Customer",
+          "column": "customer_name",
+          "order": 4
+        }
+      ]
+    },
+    {
+      "id": "hier-product",
+      "name": "Product Hierarchy",
+      "dimensionId": "dim-product",
+      "description": "Product categorization hierarchy",
+      "levels": [
+        {
+          "id": "level-department",
+          "name": "Department",
+          "column": "department",
+          "order": 1,
+          "description": "References dim_category.department"
+        },
+        {
+          "id": "level-category",
+          "name": "Category",
+          "column": "category_name",
+          "order": 2,
+          "description": "References dim_category.category_name"
+        },
+        {
+          "id": "level-product-name",
+          "name": "Product",
+          "column": "product_name",
+          "order": 3
+        }
+      ]
+    }
+  ]
+}
