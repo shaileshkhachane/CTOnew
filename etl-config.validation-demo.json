@@ -1,0 +1,25 @@
+{
+  "sources": [
+    {
+      "name": "sales_invalid",
+      "type": "csv",
+      "connection": {
+        "filePath": "./data/sales-invalid.csv",
+        "hasHeader": true
+      },
+      "schema": "sales"
+    }
+  ],
+  "target": {
+    "type": "memory"
+  },
+  "cubes": [
+    {
+      "name": "sales",
+      "factTable": "fact_sales",
+      "dimensions": [],
+      "measures": ["quantity", "amount"],
+      "sources": ["sales_invalid"]
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+customer_id,customer_name,email,segment,valid_from
+C001,John Doe,john@example.com,Premium,2024-01-01
+C002,Jane Smith,jane@example.com,Standard,2024-01-01
+C003,Bob Johnson,bob@example.com,Premium,2024-01-01
+C004,Alice Brown,alice@example.com,Standard,2024-01-01
+C005,Charlie Wilson,charlie@example.com,Premium,2024-01-01

@@ -1,0 +1,46 @@
+{
+  "sources": [
+    {
+      "name": "sales_csv",
+      "type": "csv",
+      "connection": {
+        "filePath": "./data/sales.csv",
+        "hasHeader": true
+      },
+      "schema": "sales",
+      "watermarkColumn": "sale_date"
+    },
+    {
+      "name": "products_csv",
+      "type": "csv",
+      "connection": {
+        "filePath": "./data/products.csv",
+        "hasHeader": true
+      },
+      "schema": "product",
+      "watermarkColumn": "valid_from"
+    },
+    {
+      "name": "customers_csv",
+      "type": "csv",
+      "connection": {
+        "filePath": "./data/customers.csv",
+        "hasHeader": true
+      },
+      "schema": "customer",
+      "watermarkColumn": "valid_from"
+    }
+  ],
+  "target": {
+    "type": "memory"
+  },
+  "cubes": [
+    {
+      "name": "sales",
+      "factTable": "fact_sales",
+      "dimensions": ["product", "customer"],
+      "measures": ["quantity", "amount"],
+      "sources": ["sales_csv", "products_csv", "customers_csv"]
+    }
+  ]
+}
