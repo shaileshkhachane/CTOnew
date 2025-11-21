@@ -1,0 +1,4 @@
+id,product_id,customer_id,quantity,amount,sale_date,region
+11,P001,C001,2,60.00,2024-01-25,North
+12,P002,C003,5,375.00,2024-01-26,East
+13,P003,C005,1,499.99,2024-01-27,West
